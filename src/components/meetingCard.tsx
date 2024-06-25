@@ -1,4 +1,4 @@
-import { PlusCircledIcon } from "@radix-ui/react-icons";
+import { ClipboardCopyIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -8,9 +8,11 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Login, Providers, useIsSignedIn } from "@microsoft/mgt-react";
+import { useState } from "react";
 
 export default function MeetingCard() {
   const [isSignedIn] = useIsSignedIn();
+  const [meetings, setMeetings] = useState<string[]>([]);
 
   const graphClient = Providers.globalProvider.graph.client;
 
@@ -20,6 +22,8 @@ export default function MeetingCard() {
         const user = await graphClient.api("/me").get();
         const userID = user.id;
         console.log(userID);
+
+        setMeetings([...meetings, "https://example.com"]);
 
         const meeting = await graphClient
           .api(`/users/${userID}/onlineMeetings`)
@@ -42,10 +46,45 @@ export default function MeetingCard() {
         </CardTitle>
         <Login loginView={"avatar"} />
       </CardHeader>
-      <CardContent></CardContent>
+      <CardContent>
+        <ul>
+          {meetings.map((meeting) => (
+            <li
+              key={meeting}
+              className="flex flex-row gap-4  justify-between items-center p-4 m-2 bg-gray-800/50 rounded-lg shadow-md"
+            >
+              <a href={meeting} target={"_blank"}>
+                {meeting}
+              </a>
+              <div className="flex flex-row  justify-end items-center">
+                <Button
+                  variant={"ghost"}
+                  onClick={() => {
+                    navigator.clipboard.writeText(meeting).then(() => {
+                      alert("Copied to clipboard");
+                    });
+                  }}
+                >
+                  <ClipboardCopyIcon />
+                </Button>
+                <Button variant={"link"}>
+                  <a
+                    href={meeting}
+                    target={"_blank"}
+                    className="flex  gap-2 justify-center items-center"
+                  >
+                    <PlusCircledIcon />
+                    Join
+                  </a>
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
       <CardFooter>
         <Button
-          className="w-full flex gap-4 text-xl rounded-full"
+          className="w-full flex gap-4 text-xl "
           variant={"outline"}
           disabled={!isSignedIn}
           onClick={createMeeting}
