@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Login, Providers, useIsSignedIn } from "@microsoft/mgt-react";
-import { useEffect, useState } from "react";
 
 export default function MeetingCard() {
   const [isSignedIn] = useIsSignedIn();
