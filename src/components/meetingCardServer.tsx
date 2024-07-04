@@ -72,7 +72,7 @@ export default function MeetingCardServer() {
           {meetings.map((meeting) => (
             <li
               key={meeting.link}
-              className="flex flex-row gap-4  justify-between items-center p-4 m-2 bg-gray-800/50 rounded-lg shadow-md"
+              className="flex flex-row gap-4  justify-between items-center p-4 m-2 bg-gray-800/25 rounded-lg shadow-md hover:bg-gray-800/50 hover:shadow-lg"
             >
               <a href={meeting.link} target={"_blank"} className="line-clamp-1">
                 {meeting.subject}
