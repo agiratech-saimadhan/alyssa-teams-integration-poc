@@ -6,6 +6,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
+import MeetingCardServer from "./meetingCardServer";
 
 export default function Container() {
   return (
@@ -22,7 +23,7 @@ export default function Container() {
         </TabsTrigger>
       </TabsList>
       <TabsContent value="server" className="w-full">
-        Make changes to your account here.
+        <MeetingCardServer />
       </TabsContent>
       <TabsContent value="client" className="w-full">
         <MeetingCard />

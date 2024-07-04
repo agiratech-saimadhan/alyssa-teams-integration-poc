@@ -8,6 +8,7 @@ const USER_ID = process.env.USER_OBJECT_ID;
 
 interface MeetingResponse {
   joinUrl: string;
+  subject: string;
 }
 
 const handler: Handler = async (event) => {
@@ -17,6 +18,10 @@ const handler: Handler = async (event) => {
       body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
+
+  const meetingSubject = event.queryStringParameters
+    ? event.queryStringParameters.subject
+    : `Automated Meeting from ${new Date().toISOString()}`;
 
   try {
     const tokenResponse = await axios.post(
@@ -37,11 +42,11 @@ const handler: Handler = async (event) => {
     const accessToken = tokenResponse.data.access_token;
 
     const meetingResponse = await axios.post<MeetingResponse>(
-      `https://graph.microsoft.com/v1.0/me/onlineMeetings`,
+      `https://graph.microsoft.com/v1.0/users/${USER_ID}/onlineMeetings`,
       {
         startDateTime: new Date().toISOString(),
         endDateTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
-        subject: "Meeting created via API",
+        subject: meetingSubject,
       },
       {
         headers: {
@@ -55,7 +60,10 @@ const handler: Handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ meetingUrl: meetingResponse.data.joinUrl }),
+      body: JSON.stringify({
+        joinUrl: meetingResponse.data.joinUrl,
+        subject: meetingResponse.data.subject,
+      }),
     };
   } catch (error) {
     console.error("Error:", error.response.data.error);

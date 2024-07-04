@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Login, Providers, useIsSignedIn } from "@microsoft/mgt-react";
 import { useState } from "react";
 
 interface meeting {
@@ -15,37 +14,34 @@ interface meeting {
   link: string;
 }
 
-export default function MeetingCard() {
-  const [isSignedIn] = useIsSignedIn();
+export default function MeetingCardServer() {
   const [meetings, setMeetings] = useState<meeting[]>([]);
-
-  const graphClient = Providers.globalProvider.graph.client;
 
   async function createMeeting() {
     try {
-      if (isSignedIn) {
-        const user = await graphClient.api("/me").get();
-        const userID = user.id;
-
-        const meeting = await graphClient
-          .api(`/users/${userID}/onlineMeetings`)
-          .post({
-            startDateTime: new Date().toISOString(),
-            endDateTime: new Date(new Date().getTime() + 3600 * 1000),
-            subject: `Meeting ${
+      const meeting = await fetch(
+        "http://localhost:9999/.netlify/functions/create-meeting",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            subject: `Automated Meeting ${
               meetings.length + 1
             } ${new Date().toLocaleTimeString()}`,
-          });
-
-        const meetingLink = meeting.joinUrl;
-        const meetingSubject = meeting.subject;
-
-        if (meetingLink) {
-          setMeetings((prev) => [
-            ...prev,
-            { subject: meetingSubject, link: meetingLink },
-          ]);
+          }),
         }
+      ).then((res) => res.json());
+
+      const meetingLink = meeting.joinUrl;
+      const meetingSubject = meeting.subject;
+
+      if (meetingLink) {
+        setMeetings((prev) => [
+          ...prev,
+          { subject: meetingSubject, link: meetingLink },
+        ]);
       }
     } catch (e) {
       console.log(e);
@@ -58,7 +54,6 @@ export default function MeetingCard() {
         <CardTitle>
           <h3 className="text-2xl font-bold">Meetings</h3>
         </CardTitle>
-        <Login loginView={"avatar"} />
       </CardHeader>
       <CardContent>
         <ul>
@@ -100,7 +95,6 @@ export default function MeetingCard() {
         <Button
           className="w-full flex gap-4 text-xl "
           variant={"outline"}
-          disabled={!isSignedIn}
           onClick={createMeeting}
         >
           <PlusCircledIcon className="w-5 h-5" />
