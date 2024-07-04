@@ -19,9 +19,9 @@ const handler: Handler = async (event) => {
     };
   }
 
-  const meetingSubject = event.queryStringParameters
-    ? event.queryStringParameters.subject
-    : `Automated Meeting from ${new Date().toISOString()}`;
+  const meetingSubject = event.body
+    ? JSON.parse(event.body).subject
+    : `Meeting for ${new Date().toLocaleString()}`;
 
   try {
     const tokenResponse = await axios.post(

@@ -26,7 +26,7 @@ export default function MeetingCardServer() {
   async function createMeeting() {
     try {
       const meeting = await fetch(
-        "http://localhost:9999/.netlify/functions/create-meeting",
+        `http://localhost:8888/.netlify/functions/create-meeting`,
         {
           method: "POST",
           headers: {
@@ -55,7 +55,7 @@ export default function MeetingCardServer() {
   }
 
   return (
-    <Card className=" w-full">
+    <div className=" w-full">
       <CardHeader className="flex flex-row w-full justify-between items-center">
         <CardTitle>
           <h3 className="text-2xl font-bold">Meetings</h3>
@@ -123,6 +123,6 @@ export default function MeetingCardServer() {
           Create Meeting
         </Button>
       </CardFooter>
-    </Card>
+    </div>
   );
 }

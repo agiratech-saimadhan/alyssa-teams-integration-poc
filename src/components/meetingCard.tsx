@@ -67,7 +67,7 @@ export default function MeetingCard() {
   }
 
   return (
-    <Card className=" w-full">
+    <div className=" w-full bg-opacity-5">
       <CardHeader className="flex flex-row w-full justify-between items-center">
         <CardTitle>
           <h3 className="text-2xl font-bold">Meetings</h3>
@@ -81,7 +81,7 @@ export default function MeetingCard() {
           </h2>
         ) : null}
 
-        <ul className="my-8">
+        <ul className="my-8 ">
           {meetings.map((meeting) => (
             <li
               key={meeting.link}
@@ -141,6 +141,6 @@ export default function MeetingCard() {
           Create Meeting
         </Button>
       </CardFooter>
-    </Card>
+    </div>
   );
 }
