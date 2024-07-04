@@ -11,8 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+
 import { Login, Providers, useIsSignedIn } from "@microsoft/mgt-react";
 import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface meeting {
   subject: string;
@@ -68,7 +75,13 @@ export default function MeetingCard() {
         <Login loginView={"avatar"} />
       </CardHeader>
       <CardContent>
-        <ul>
+        {meetings.length == 0 ? (
+          <h2 className="text-2xl font-bold text-center my-8">
+            No meetings yet
+          </h2>
+        ) : null}
+
+        <ul className="my-8">
           {meetings.map((meeting) => (
             <li
               key={meeting.link}
@@ -78,23 +91,33 @@ export default function MeetingCard() {
                 {meeting.subject}
               </a>
               <div className="flex flex-row  justify-end items-center">
-                <Button
-                  variant={"ghost"}
-                  onClick={() => {
-                    navigator.clipboard.writeText(meeting.link).then(() => {
-                      alert("Copied to clipboard");
-                    });
-                  }}
-                >
-                  <ClipboardCopyIcon />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Button
+                        variant={"ghost"}
+                        onClick={() => {
+                          navigator.clipboard
+                            .writeText(meeting.link)
+                            .then(() => {
+                              alert("Copied to clipboard");
+                            });
+                        }}
+                      >
+                        <ClipboardCopyIcon />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Copy Meeting Link</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Button variant={"link"}>
                   <a
                     href={meeting.link}
                     target={"_blank"}
                     className="flex  gap-2 justify-center items-center"
                   >
-                    <PlusCircledIcon />
                     Join
                   </a>
                 </Button>
@@ -106,7 +129,7 @@ export default function MeetingCard() {
       <CardFooter>
         <Button
           className="w-full flex gap-4 text-xl "
-          variant={"outline"}
+          variant={"default"}
           disabled={!isSignedIn || loading}
           onClick={createMeeting}
         >
