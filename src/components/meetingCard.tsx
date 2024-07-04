@@ -1,4 +1,8 @@
-import { ClipboardCopyIcon, PlusCircledIcon } from "@radix-ui/react-icons";
+import {
+  ClipboardCopyIcon,
+  PlusCircledIcon,
+  ReloadIcon,
+} from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -18,12 +22,14 @@ interface meeting {
 export default function MeetingCard() {
   const [isSignedIn] = useIsSignedIn();
   const [meetings, setMeetings] = useState<meeting[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const graphClient = Providers.globalProvider.graph.client;
 
   async function createMeeting() {
     try {
       if (isSignedIn) {
+        setLoading(true);
         const user = await graphClient.api("/me").get();
         const userID = user.id;
 
@@ -45,6 +51,7 @@ export default function MeetingCard() {
             ...prev,
             { subject: meetingSubject, link: meetingLink },
           ]);
+          setLoading(false);
         }
       }
     } catch (e) {
@@ -100,10 +107,14 @@ export default function MeetingCard() {
         <Button
           className="w-full flex gap-4 text-xl "
           variant={"outline"}
-          disabled={!isSignedIn}
+          disabled={!isSignedIn || loading}
           onClick={createMeeting}
         >
-          <PlusCircledIcon className="w-5 h-5" />
+          {loading ? (
+            <ReloadIcon className="animate-spin w-5 h-5" />
+          ) : (
+            <PlusCircledIcon className="w-5 h-5" />
+          )}
           Create Meeting
         </Button>
       </CardFooter>
