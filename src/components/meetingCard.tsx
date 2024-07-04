@@ -53,7 +53,7 @@ export default function MeetingCard() {
   }
 
   return (
-    <Card className="max-w-2xl w-full">
+    <Card className=" w-full">
       <CardHeader className="flex flex-row w-full justify-between items-center">
         <CardTitle>
           <h3 className="text-2xl font-bold">Meetings</h3>
