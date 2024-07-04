@@ -10,9 +10,14 @@ import {
 import { Login, Providers, useIsSignedIn } from "@microsoft/mgt-react";
 import { useState } from "react";
 
+interface meeting {
+  subject: string;
+  link: string;
+}
+
 export default function MeetingCard() {
   const [isSignedIn] = useIsSignedIn();
-  const [meetings, setMeetings] = useState<string[]>([]);
+  const [meetings, setMeetings] = useState<meeting[]>([]);
 
   const graphClient = Providers.globalProvider.graph.client;
 
@@ -21,17 +26,26 @@ export default function MeetingCard() {
       if (isSignedIn) {
         const user = await graphClient.api("/me").get();
         const userID = user.id;
-        console.log(userID);
-
-        setMeetings([...meetings, "https://example.com"]);
 
         const meeting = await graphClient
           .api(`/users/${userID}/onlineMeetings`)
           .post({
             startDateTime: new Date().toISOString(),
             endDateTime: new Date(new Date().getTime() + 3600 * 1000),
+            subject: `Automated Meeting ${
+              meetings.length + 1
+            } ${new Date().toLocaleTimeString()}`,
           });
-        console.log(meeting);
+
+        const meetingLink = meeting.joinUrl;
+        const meetingSubject = meeting.subject;
+
+        if (meetingLink) {
+          setMeetings((prev) => [
+            ...prev,
+            { subject: meetingSubject, link: meetingLink },
+          ]);
+        }
       }
     } catch (e) {
       console.log(e);
@@ -50,17 +64,17 @@ export default function MeetingCard() {
         <ul>
           {meetings.map((meeting) => (
             <li
-              key={meeting}
+              key={meeting.link}
               className="flex flex-row gap-4  justify-between items-center p-4 m-2 bg-gray-800/50 rounded-lg shadow-md"
             >
-              <a href={meeting} target={"_blank"}>
-                {meeting}
+              <a href={meeting.link} target={"_blank"} className="line-clamp-1">
+                {meeting.subject}
               </a>
               <div className="flex flex-row  justify-end items-center">
                 <Button
                   variant={"ghost"}
                   onClick={() => {
-                    navigator.clipboard.writeText(meeting).then(() => {
+                    navigator.clipboard.writeText(meeting.link).then(() => {
                       alert("Copied to clipboard");
                     });
                   }}
@@ -69,7 +83,7 @@ export default function MeetingCard() {
                 </Button>
                 <Button variant={"link"}>
                   <a
-                    href={meeting}
+                    href={meeting.link}
                     target={"_blank"}
                     className="flex  gap-2 justify-center items-center"
                   >

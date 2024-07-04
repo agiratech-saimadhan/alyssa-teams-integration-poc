@@ -37,7 +37,7 @@ const handler: Handler = async (event) => {
     const accessToken = tokenResponse.data.access_token;
 
     const meetingResponse = await axios.post<MeetingResponse>(
-      `https://graph.microsoft.com/v1.0/users/${USER_ID}/onlineMeetings`,
+      `https://graph.microsoft.com/v1.0/me/onlineMeetings`,
       {
         startDateTime: new Date().toISOString(),
         endDateTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
@@ -50,6 +50,8 @@ const handler: Handler = async (event) => {
         },
       }
     );
+
+    console.log(meetingResponse);
 
     return {
       statusCode: 200,
