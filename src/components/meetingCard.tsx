@@ -18,6 +18,7 @@ import {
 interface meeting {
   subject: string;
   link: string;
+  attendee: string;
 }
 
 export default function MeetingCard() {
@@ -67,11 +68,16 @@ export default function MeetingCard() {
 
         const meetingLink = meeting.joinUrl;
         const meetingSubject = meeting.subject;
+        const meetingAttendee = meeting.participants.attendees[0].upn;
 
         if (meetingLink) {
           setMeetings((prev) => [
             ...prev,
-            { subject: meetingSubject, link: meetingLink },
+            {
+              subject: meetingSubject,
+              link: meetingLink,
+              attendee: meetingAttendee,
+            },
           ]);
           setLoading(false);
         }
@@ -102,9 +108,16 @@ export default function MeetingCard() {
               key={meeting.link}
               className="flex flex-row gap-4  justify-between items-center p-4 m-2 bg-gray-800/25 rounded-lg shadow-md backdrop-blur-md hover:bg-gray-800/50 hover:shadow-lg"
             >
-              <a href={meeting.link} target={"_blank"} className="line-clamp-1">
-                {meeting.subject}
-              </a>
+              <div className="flex flex-col gap-1">
+                <a
+                  href={meeting.link}
+                  target={"_blank"}
+                  className="line-clamp-1"
+                >
+                  {meeting.subject}
+                </a>
+                <p className="text-xs text-gray-400"> {meeting.attendee}</p>
+              </div>
               <div className="flex flex-row  justify-end items-center">
                 <TooltipProvider>
                   <Tooltip>

@@ -80,6 +80,7 @@ const handler: Handler = async (event) => {
       body: JSON.stringify({
         joinUrl: meetingResponse.data.joinUrl,
         subject: meetingResponse.data.subject,
+        attendee: meetingResponse.data.participants.attendees[0].upn,
       }),
     };
   } catch (error) {
