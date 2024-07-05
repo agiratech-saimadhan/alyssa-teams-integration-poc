@@ -25,20 +25,17 @@ export default function MeetingCardServer() {
   async function createMeeting() {
     try {
       setLoading(true);
-      const meeting = await fetch(
-        `http://localhost:8888/.netlify/functions/create-meeting`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            subject: `Automated Meeting ${
-              meetings.length + 1
-            } ${new Date().toLocaleTimeString()}`,
-          }),
-        }
-      ).then((res) => res.json());
+      const meeting = await fetch(`/.netlify/functions/create-meeting`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subject: `Automated Meeting ${
+            meetings.length + 1
+          } ${new Date().toLocaleTimeString()}`,
+        }),
+      }).then((res) => res.json());
 
       const meetingLink = meeting.joinUrl;
       const meetingSubject = meeting.subject;
