@@ -56,8 +56,6 @@ const handler: Handler = async (event) => {
       }
     );
 
-    console.log(meetingResponse.data);
-
     return {
       statusCode: 200,
       body: JSON.stringify({
