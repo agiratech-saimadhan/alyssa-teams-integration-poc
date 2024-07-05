@@ -11,6 +11,12 @@ interface MeetingResponse {
   subject: string;
 }
 
+const meetingAttendees = [
+  "bharani.a@agiratech.com",
+  "vignesh.j@agiratech.com",
+  "prakash.p@agiratech.com",
+];
+
 const handler: Handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return {
@@ -41,12 +47,25 @@ const handler: Handler = async (event) => {
 
     const accessToken = tokenResponse.data.access_token;
 
+    const randomIndex = Math.floor(Math.random() * meetingAttendees.length);
+
     const meetingResponse = await axios.post<MeetingResponse>(
       `https://graph.microsoft.com/v1.0/users/${USER_ID}/onlineMeetings`,
       {
         startDateTime: new Date().toISOString(),
         endDateTime: new Date(Date.now() + 3600000).toISOString(), // 1 hour from now
         subject: meetingSubject,
+        participants: {
+          attendees: [
+            {
+              role: "attendee",
+              upn: meetingAttendees[randomIndex],
+            },
+          ],
+        },
+        lobbyBypassSettings: {
+          scope: "invited",
+        },
       },
       {
         headers: {

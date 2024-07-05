@@ -27,12 +27,22 @@ export default function MeetingCard() {
 
   const graphClient = Providers.globalProvider.graph.client;
 
+  const meetingAttendees = [
+    "bharani.a@agiratech.com",
+    "vignesh.j@agiratech.com",
+    "prakash.p@agiratech.com",
+  ];
+
   async function createMeeting() {
     try {
       if (isSignedIn) {
         setLoading(true);
         const user = await graphClient.api("/me").get();
         const userID = user.id;
+
+        const randomIndex = Math.floor(Math.random() * meetingAttendees.length);
+
+        console.log(randomIndex);
 
         const meeting = await graphClient
           .api(`/users/${userID}/onlineMeetings`)
@@ -42,6 +52,17 @@ export default function MeetingCard() {
             subject: `Meeting ${
               meetings.length + 1
             } ${new Date().toLocaleTimeString()}`,
+            participants: {
+              attendees: [
+                {
+                  role: "attendee",
+                  upn: meetingAttendees[randomIndex],
+                },
+              ],
+            },
+            lobbyBypassSettings: {
+              scope: "invited",
+            },
           });
 
         const meetingLink = meeting.joinUrl;
