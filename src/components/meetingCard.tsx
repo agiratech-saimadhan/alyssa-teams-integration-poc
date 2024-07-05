@@ -4,13 +4,7 @@ import {
   ReloadIcon,
 } from "@radix-ui/react-icons";
 import { Button } from "./ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+import { CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
 
 import { Login, Providers, useIsSignedIn } from "@microsoft/mgt-react";
 import { useState } from "react";

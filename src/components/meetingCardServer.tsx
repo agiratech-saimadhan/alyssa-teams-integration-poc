@@ -1,12 +1,10 @@
-import { ClipboardCopyIcon, PlusCircledIcon } from "@radix-ui/react-icons";
-import { Button } from "./ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
+  ClipboardCopyIcon,
+  PlusCircledIcon,
+  ReloadIcon,
+} from "@radix-ui/react-icons";
+import { Button } from "./ui/button";
+import { CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { useState } from "react";
 import {
   Tooltip,
@@ -22,9 +20,11 @@ interface meeting {
 
 export default function MeetingCardServer() {
   const [meetings, setMeetings] = useState<meeting[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   async function createMeeting() {
     try {
+      setLoading(true);
       const meeting = await fetch(
         `http://localhost:8888/.netlify/functions/create-meeting`,
         {
@@ -49,7 +49,9 @@ export default function MeetingCardServer() {
           { subject: meetingSubject, link: meetingLink },
         ]);
       }
+      setLoading(false);
     } catch (e) {
+      setLoading(false);
       console.log(e);
     }
   }
@@ -117,9 +119,14 @@ export default function MeetingCardServer() {
         <Button
           className="w-full flex gap-4 text-xl "
           variant={"default"}
+          disabled={loading}
           onClick={createMeeting}
         >
-          <PlusCircledIcon className="w-5 h-5" />
+          {loading ? (
+            <ReloadIcon className="animate-spin w-5 h-5" />
+          ) : (
+            <PlusCircledIcon className="w-5 h-5" />
+          )}
           Create Meeting
         </Button>
       </CardFooter>
